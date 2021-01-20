@@ -7,8 +7,7 @@ import {
     ReplicationResponseMessages
 } from "../domain/replication-messages";
 import {LoggerService} from "../../shared/loggers/domain/logger.service";
-import {ConfigOptions} from "../../shared/config/domain/config.options";
-import {openConnection} from "../../shared/sockets/domain/open-connection";
+import {ServerManager} from "../../server-manager/application/server-manager";
 
 @Injectable()
 export class ReplicationService{
@@ -16,10 +15,11 @@ export class ReplicationService{
     server: Server;
 
     private isAReplicationRequestInProgress: boolean = false;
-    private replicationServers: Socket[] = [];
-    private votesRemaining: number = 0;
+    private votesRemaining: number;
+    private commitVotes: number;
+    private abortVotes: number;
 
-    constructor(private readonly configService: ConfigOptions, private readonly loggerService: LoggerService) {
+    constructor(private readonly serverManager: ServerManager, private readonly loggerService: LoggerService) {
     }
 
     @SubscribeMessage(MOBCoordinatorMessages.REPLICATE_OBJECTS)
@@ -35,28 +35,31 @@ export class ReplicationService{
 
     @SubscribeMessage(ReplicationResponseMessages.VOTE_COMMIT)
     async onVoteCommit(client: Socket, username: string) {
-        this.loggerService.log("onVoteCommit: server accept the request", "ReplicationService", --this.votesRemaining);
+        this.loggerService.log("onVoteCommit: server accepted the request", "ReplicationService", --this.votesRemaining);
         if(this.votesRemaining === 0){
-            this.loggerService.log("onVoteCommit: all votes are commit", "ReplicationService");
-            this.sendMessageToReplicationServers(ReplicationRequestMessages.GLOBAL_COMMIT);
+            if(this.commitVotes === this.serverManager.getNumberOfVotes()){
+                this.loggerService.log("onVoteCommit: all votes are commit", "ReplicationService");
+                this.serverManager.sendMessageToReplicationServers(ReplicationRequestMessages.GLOBAL_COMMIT);
+            }
+            else {
+                this.loggerService.log("onVoteCommit: aborting", "ReplicationService", {
+                    commit: this.commitVotes,
+                    abort: this.abortVotes
+                });
+            }
             this.isAReplicationRequestInProgress = false;
         }
     }
 
-    private sendMessageToReplicationServers(message: string){
-        this.loggerService.log("sendMessageToReplicationServers: sending message to replication servers",
-            "ReplicationService", {message});
-        for(const server of this.replicationServers){
-            server.emit(message);
-        }
-    }
-
-    private async openConnections(){
-        if(this.replicationServers.length === 0){
-            for(const host of this.configService.replicationServers){
-                this.replicationServers.push(await openConnection(host.port, host.address));
-            }
-            this.votesRemaining = this.replicationServers.length;
+    @SubscribeMessage(ReplicationResponseMessages.VOTE_COMMIT)
+    async onVoteAbort(client: Socket, username: string) {
+        this.loggerService.log("onVoteAbort: server aborted the request", "ReplicationService", --this.votesRemaining);
+        if(this.votesRemaining === 0){
+            this.loggerService.log("onVoteAbort: aborting", "ReplicationService", {
+                commit: this.commitVotes,
+                abort: this.abortVotes
+            });
+            this.isAReplicationRequestInProgress = false;
         }
     }
 
@@ -64,8 +67,8 @@ export class ReplicationService{
         this.loggerService.log("startReplicationProcess: starting replication process",
             "ReplicationService");
         this.isAReplicationRequestInProgress = true;
-        await this.openConnections();
-        this.sendMessageToReplicationServers(ReplicationRequestMessages.VOTE_REQUEST);
+        this.votesRemaining = this.serverManager.getNumberOfVotes();
+        this.serverManager.sendMessageToReplicationServers(ReplicationRequestMessages.VOTE_REQUEST);
         // now the system is counting the incoming votes
     }
 }

@@ -31,4 +31,4 @@ lerna-debug.log*
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
-/services/coordinator/
+/services/coordinator/dist
