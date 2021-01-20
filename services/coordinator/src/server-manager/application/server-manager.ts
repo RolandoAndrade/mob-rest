@@ -22,7 +22,7 @@ export class ServerManager{
         }
     }
 
-    public sendMessageToReplicationServers(message: string){
+    public sendMessageToReplicationServers(message: string, data?: any){
         this.loggerService.log("sendMessageToReplicationServers: sending message to replication servers",
             "ServerManager", {message});
         for(const server of ServerManager.replicationServers){

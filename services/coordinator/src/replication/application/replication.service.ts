@@ -4,7 +4,7 @@ import {Server, Socket} from "socket.io";
 import {
     MOBCoordinatorMessages,
     ReplicationRequestMessages,
-    ReplicationResponseMessages
+    ReplicationResponseMessages, ReplicatorCoordinatorMessages
 } from "../domain/replication-messages";
 import {LoggerService} from "../../shared/loggers/domain/logger.service";
 import {ServerManager} from "../../server-manager/application/server-manager";
@@ -35,30 +35,33 @@ export class ReplicationService{
 
     @SubscribeMessage(ReplicationResponseMessages.VOTE_COMMIT)
     async onVoteCommit(client: Socket, username: string) {
-        this.loggerService.log("onVoteCommit: server accepted the request", "ReplicationService", --this.votesRemaining);
+        this.loggerService.log("onVoteCommit: server accepted the request", "ReplicationService", {
+            votesRemaining: --this.votesRemaining,
+            commits: ++this.commitVotes,
+            aborts: this.abortVotes
+        });
+
         if(this.votesRemaining === 0){
             if(this.commitVotes === this.serverManager.getNumberOfVotes()){
                 this.loggerService.log("onVoteCommit: all votes are commit", "ReplicationService");
                 this.serverManager.sendMessageToReplicationServers(ReplicationRequestMessages.GLOBAL_COMMIT);
             }
             else {
-                this.loggerService.log("onVoteCommit: aborting", "ReplicationService", {
-                    commit: this.commitVotes,
-                    abort: this.abortVotes
-                });
+                this.serverManager.sendMessageToReplicationServers(ReplicationRequestMessages.GLOBAL_ABORT);
             }
             this.isAReplicationRequestInProgress = false;
         }
     }
 
-    @SubscribeMessage(ReplicationResponseMessages.VOTE_COMMIT)
+    @SubscribeMessage(ReplicationResponseMessages.VOTE_ABORT)
     async onVoteAbort(client: Socket, username: string) {
-        this.loggerService.log("onVoteAbort: server aborted the request", "ReplicationService", --this.votesRemaining);
+        this.loggerService.log("onVoteAbort: server aborted the request", "ReplicationService", {
+            votesRemaining: --this.votesRemaining,
+            commits: this.commitVotes,
+            aborts: ++this.abortVotes
+        });
         if(this.votesRemaining === 0){
-            this.loggerService.log("onVoteAbort: aborting", "ReplicationService", {
-                commit: this.commitVotes,
-                abort: this.abortVotes
-            });
+            this.serverManager.sendMessageToReplicationServers(ReplicationRequestMessages.GLOBAL_ABORT);
             this.isAReplicationRequestInProgress = false;
         }
     }
@@ -70,5 +73,14 @@ export class ReplicationService{
         this.votesRemaining = this.serverManager.getNumberOfVotes();
         this.serverManager.sendMessageToReplicationServers(ReplicationRequestMessages.VOTE_REQUEST);
         // now the system is counting the incoming votes
+    }
+
+
+    @SubscribeMessage(ReplicatorCoordinatorMessages.MAKE_REPLICATION)
+    async onMakeReplication(client: Socket, username: string) {
+        this.loggerService.log("onMakeReplication: sending objects", "ReplicationService");
+        return [{
+            name: "object"
+        }]
     }
 }

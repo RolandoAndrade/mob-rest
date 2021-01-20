@@ -1,6 +1,7 @@
 export enum ReplicationRequestMessages{
     VOTE_REQUEST = "VOTE_REQUEST",
-    GLOBAL_COMMIT = "GLOBAL_COMMIT"
+    GLOBAL_COMMIT = "GLOBAL_COMMIT",
+    GLOBAL_ABORT = "GLOBAL_ABORT"
 }
 
 export enum ReplicationResponseMessages{
@@ -14,6 +15,6 @@ export enum MOBCoordinatorMessages{
 }
 
 export enum ReplicatorCoordinatorMessages{
-    START_REPLICATION = "MAKE_REPLICATION",
+    MAKE_REPLICATION = "MAKE_REPLICATION",
     RETRIEVE_OBJECTS = "RETRIEVE_OBJECTS"
 }
