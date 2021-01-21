@@ -3,35 +3,37 @@ import {Injectable} from "@nestjs/common";
 import {openConnection} from "../../shared/sockets/domain/open-connection";
 import {Host} from "../../shared/config/domain/host";
 import {LoggerService} from "../../shared/loggers/domain/logger.service";
-import {ReplicationRequestMessages} from "../../replication/domain/replication-messages";
 import {Socket} from "socket.io";
 
 @Injectable()
 export class ServerManager{
-    private static replicationServers: Socket[] = [];
+    private static servers: Socket[] = [];
     constructor(private readonly configManager: ConfigManager, private readonly loggerService: LoggerService) {
-        if(ServerManager.replicationServers.length === 0){
-            this.fillReplicationServers();
+    }
+
+    public async fillServers(){
+        if(ServerManager.servers.length === 0){
+            this.loggerService.log("fillServers: starting connection with servers", "ServerManager")
+            const servers: Host[] = this.configManager.get("replicationServers");
+            for(const server of servers){
+                ServerManager.servers.push(await openConnection(server.port, server.address))
+            }
         }
     }
 
-    private async fillReplicationServers(){
-        this.loggerService.log("fillReplicationServers: starting connection", "ServerManager")
-        const servers: Host[] = this.configManager.get("replicationServers");
-        for(const server of servers){
-            ServerManager.replicationServers.push(await openConnection(server.port, server.address))
-        }
-    }
-
-    public sendMessageToReplicationServers(message: string, data?: any){
-        this.loggerService.log("sendMessageToReplicationServers: sending message to replication servers",
+    public sendMessageToServers(message: string, data?: any){
+        this.loggerService.log("sendMessageToServers: sending message to servers",
             "ServerManager", {message});
-        for(const server of ServerManager.replicationServers){
-            console.log( server.emit(message));
+        for(const server of ServerManager.servers){
+            server.emit(message)
         }
     }
 
-    public getNumberOfVotes(): number{
-        return ServerManager.replicationServers.length;
+    public addEventFromServer(event: string, fn: Function){
+        for(const server of ServerManager.servers){
+            server.on(event, (data)=>{
+                fn(data);
+            });
+        }
     }
 }

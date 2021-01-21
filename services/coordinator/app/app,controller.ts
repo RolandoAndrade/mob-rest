@@ -8,6 +8,6 @@ export class AppController{
 
     @Get("vote-request")
     voteRequest(){
-        this.replicationService.onReplicationRequest(undefined, undefined);
+        this.replicationService.onReplicationRequest();
     }
 }

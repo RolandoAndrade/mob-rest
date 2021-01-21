@@ -1,5 +1,5 @@
 import {Injectable} from "@nestjs/common";
-import {SubscribeMessage, WebSocketServer} from "@nestjs/websockets";
+import {SubscribeMessage, WebSocketGateway, WebSocketServer} from "@nestjs/websockets";
 import {Server, Socket} from "socket.io";
 import {
     MOBCoordinatorMessages,
@@ -9,6 +9,7 @@ import {
 import {LoggerService} from "../../shared/loggers/domain/logger.service";
 import {ServerManager} from "../../server-manager/application/server-manager";
 
+@WebSocketGateway()
 @Injectable()
 export class ReplicationService{
     @WebSocketServer()
@@ -20,10 +21,10 @@ export class ReplicationService{
     private abortVotes: number;
 
     constructor(private readonly serverManager: ServerManager, private readonly loggerService: LoggerService) {
+        serverManager.addEventFromServer(MOBCoordinatorMessages.REPLICATE_OBJECTS, this.onReplicationRequest)
     }
 
-    @SubscribeMessage(MOBCoordinatorMessages.REPLICATE_OBJECTS)
-    async onReplicationRequest(client: Socket, username: string) {
+    async onReplicationRequest() {
         this.loggerService.log("onReplicationRequest: request of replication in progress", "ReplicationService");
         if(this.isAReplicationRequestInProgress){
             this.loggerService.warn("onReplicationRequest: the is a request in progress, try again later", "ReplicationService");
@@ -42,12 +43,12 @@ export class ReplicationService{
         });
 
         if(this.votesRemaining === 0){
-            if(this.commitVotes === this.serverManager.getNumberOfVotes()){
+            if(this.commitVotes === this.server.clients.length){
                 this.loggerService.log("onVoteCommit: all votes are commit", "ReplicationService");
-                this.serverManager.sendMessageToReplicationServers(ReplicationRequestMessages.GLOBAL_COMMIT);
+                this.server.emit(ReplicationRequestMessages.GLOBAL_COMMIT);
             }
             else {
-                this.serverManager.sendMessageToReplicationServers(ReplicationRequestMessages.GLOBAL_ABORT);
+                this.server.emit(ReplicationRequestMessages.GLOBAL_ABORT);
             }
             this.isAReplicationRequestInProgress = false;
         }
@@ -61,26 +62,25 @@ export class ReplicationService{
             aborts: ++this.abortVotes
         });
         if(this.votesRemaining === 0){
-            this.serverManager.sendMessageToReplicationServers(ReplicationRequestMessages.GLOBAL_ABORT);
+            this.server.emit(ReplicationRequestMessages.GLOBAL_ABORT);
             this.isAReplicationRequestInProgress = false;
         }
+    }
+
+    @SubscribeMessage(ReplicatorCoordinatorMessages.MAKE_REPLICATION)
+    async onMakeReplication(client: Socket, username: string) {
+        this.loggerService.log("onMakeReplication: sending objects", "ReplicationService");
+        this.server.emit("replication", [{
+            name: "object"
+        }])
     }
 
     private async startReplicationProcess(){
         this.loggerService.log("startReplicationProcess: starting replication process",
             "ReplicationService");
         this.isAReplicationRequestInProgress = true;
-        this.votesRemaining = this.serverManager.getNumberOfVotes();
-        this.serverManager.sendMessageToReplicationServers(ReplicationRequestMessages.VOTE_REQUEST);
+        this.votesRemaining = this.server.clients.length;
+        this.server.emit(ReplicationRequestMessages.VOTE_REQUEST);
         // now the system is counting the incoming votes
-    }
-
-
-    @SubscribeMessage(ReplicatorCoordinatorMessages.MAKE_REPLICATION)
-    async onMakeReplication(client: Socket, username: string) {
-        this.loggerService.log("onMakeReplication: sending objects", "ReplicationService");
-        return [{
-            name: "object"
-        }]
     }
 }
