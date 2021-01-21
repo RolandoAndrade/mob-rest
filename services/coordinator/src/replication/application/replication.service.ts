@@ -8,6 +8,7 @@ import {
 } from "../domain/replication-messages";
 import {LoggerService} from "../../shared/loggers/domain/logger.service";
 import {ServerManager} from "../../server-manager/application/server-manager";
+import {CommitStatus} from "../domain/commit-status";
 
 @WebSocketGateway()
 @Injectable()
@@ -24,13 +25,13 @@ export class ReplicationService{
         serverManager.addEventFromServer(MOBCoordinatorMessages.REPLICATE_OBJECTS, this.onReplicationRequest)
     }
 
-    async onReplicationRequest() {
+    async onReplicationRequest(commitStatus: CommitStatus) {
         this.loggerService.log("onReplicationRequest: request of replication in progress", "ReplicationService");
         if(this.isAReplicationRequestInProgress){
             this.loggerService.warn("onReplicationRequest: the is a request in progress, try again later", "ReplicationService");
         }
         else {
-            await this.startReplicationProcess();
+            await this.startReplicationProcess(commitStatus);
         }
     }
 
@@ -75,14 +76,14 @@ export class ReplicationService{
         }])
     }
 
-    private async startReplicationProcess(){
+    private async startReplicationProcess(commitStatus: CommitStatus){
         this.loggerService.log("startReplicationProcess: starting replication process",
             "ReplicationService");
         this.isAReplicationRequestInProgress = true;
         this.votesRemaining = (this.server.engine as any).clientsCount;
         this.commitVotes = 0;
         this.abortVotes = 0;
-        this.server.emit(ReplicationRequestMessages.VOTE_REQUEST);
+        this.server.emit(ReplicationRequestMessages.VOTE_REQUEST, commitStatus);
         // now the system is counting the incoming votes
     }
 }

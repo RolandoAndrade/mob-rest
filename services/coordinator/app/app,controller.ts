@@ -1,5 +1,6 @@
 import {Controller, Get} from "@nestjs/common";
 import {ReplicationService} from "../src/replication/application/replication.service";
+import {CommitStatus} from "../src/replication/domain/commit-status";
 
 @Controller("test")
 export class AppController{
@@ -8,6 +9,6 @@ export class AppController{
 
     @Get("vote-request")
     voteRequest(){
-        this.replicationService.onReplicationRequest();
+        this.replicationService.onReplicationRequest(CommitStatus.COMMIT);
     }
 }

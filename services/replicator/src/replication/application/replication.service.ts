@@ -1,8 +1,9 @@
-import {Injectable} from "@nestjs/common";
+import {BadRequestException, Injectable} from "@nestjs/common";
 import {LoggerService} from "../../shared/loggers/domain/logger.service";
 import {ReplicationRequestMessages, ReplicationResponseMessages} from "../domain/replication-messages";
 import {ReplicatorCoordinatorMessages} from "../../shared/domain/replicator-coordinator-messages";
 import {ServerManager} from "../../server-manager/application/server-manager";
+import {CommitStatus} from "../domain/commit-status";
 
 @Injectable()
 export class ReplicationService{
@@ -16,8 +17,13 @@ export class ReplicationService{
         this.serverManager.sendMessageToServers(ReplicatorCoordinatorMessages.MAKE_REPLICATION);
     }
 
-    async onVoteRequest() {
+    async onVoteRequest(commitStatus: CommitStatus) {
         this.loggerService.log("onVoteRequest: vote request received", "ReplicationService");
-        this.serverManager.sendMessageToServers(ReplicationResponseMessages.VOTE_COMMIT);
+        if(commitStatus === CommitStatus.COMMIT){
+            this.serverManager.sendMessageToServers(ReplicationResponseMessages.VOTE_COMMIT);
+        }
+        else if(commitStatus === CommitStatus.ABORT){
+            this.serverManager.sendMessageToServers(ReplicationResponseMessages.VOTE_ABORT);
+        }
     }
 }
