@@ -1,7 +1,8 @@
 export enum ReplicationRequestMessages{
     VOTE_REQUEST = "VOTE_REQUEST",
     GLOBAL_COMMIT = "GLOBAL_COMMIT",
-    GLOBAL_ABORT = "GLOBAL_ABORT"
+    GLOBAL_ABORT = "GLOBAL_ABORT",
+    LETS_MAKE_A_REPLICATION = "LETS_MAKE_A_REPLICATION"
 }
 
 export enum ReplicationResponseMessages{

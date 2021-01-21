@@ -9,6 +9,8 @@ import {
 import {LoggerService} from "../../shared/loggers/domain/logger.service";
 import {ServerManager} from "../../server-manager/application/server-manager";
 import {CommitStatus} from "../domain/commit-status";
+import * as fs from "fs";
+import {ConfigManager} from "../../shared/config/domain/config.manager";
 
 @WebSocketGateway()
 @Injectable()
@@ -21,7 +23,9 @@ export class ReplicationService{
     private commitVotes: number;
     private abortVotes: number;
 
-    constructor(private readonly serverManager: ServerManager, private readonly loggerService: LoggerService) {
+    constructor(private readonly serverManager: ServerManager,
+                private readonly configManager: ConfigManager,
+                private readonly loggerService: LoggerService) {
         serverManager.addEventFromServer(MOBCoordinatorMessages.REPLICATE_OBJECTS, this.onReplicationRequest)
     }
 
@@ -71,9 +75,8 @@ export class ReplicationService{
     @SubscribeMessage(ReplicatorCoordinatorMessages.MAKE_REPLICATION)
     async onMakeReplication(client: Socket, username: string) {
         this.loggerService.log("onMakeReplication: sending objects", "ReplicationService");
-        this.server.emit("replication", [{
-            name: "object"
-        }])
+        const file = fs.readFileSync(this.configManager.get("repository"));
+        this.server.emit(ReplicationRequestMessages.LETS_MAKE_A_REPLICATION, file.toString('base64'));
     }
 
     private async startReplicationProcess(commitStatus: CommitStatus){

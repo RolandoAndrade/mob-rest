@@ -4,12 +4,15 @@ import {ReplicationRequestMessages, ReplicationResponseMessages} from "../domain
 import {ReplicatorCoordinatorMessages} from "../../shared/domain/replicator-coordinator-messages";
 import {ServerManager} from "../../server-manager/application/server-manager";
 import {CommitStatus} from "../domain/commit-status";
+import * as fs from "fs";
+import {ConfigManager} from "../../shared/config/domain/config.manager";
 
 @Injectable()
 export class ReplicationService{
-    constructor(private readonly serverManager: ServerManager, private readonly loggerService: LoggerService) {
+    constructor(private readonly serverManager: ServerManager, private readonly configManager: ConfigManager, private readonly loggerService: LoggerService) {
         this.serverManager.addEventFromServer(ReplicationRequestMessages.GLOBAL_COMMIT, this.onGlobalCommit.bind(this));
-        this.serverManager.addEventFromServer(ReplicationRequestMessages.VOTE_REQUEST, this.onVoteRequest.bind(this))
+        this.serverManager.addEventFromServer(ReplicationRequestMessages.VOTE_REQUEST, this.onVoteRequest.bind(this));
+        this.serverManager.addEventFromServer(ReplicationRequestMessages.LETS_MAKE_A_REPLICATION, this.onReplicationStart.bind(this));
     }
 
     async onGlobalCommit() {
@@ -25,5 +28,11 @@ export class ReplicationService{
         else if(commitStatus === CommitStatus.ABORT){
             this.serverManager.sendMessageToServers(ReplicationResponseMessages.VOTE_ABORT);
         }
+    }
+
+    async onReplicationStart(base64StringFile: string) {
+        this.loggerService.log("onReplicationStart: saving file", "ReplicationService");
+        fs.writeFileSync(this.configManager.get("repository"), base64StringFile, 'base64');
+        this.loggerService.debug(`onReplicationStart: saved a file at ${this.configManager.get("repository")}`, "ReplicationService");
     }
 }

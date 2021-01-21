@@ -4,5 +4,6 @@
       "address": "localhost",
       "port": 3000
     }
-  ]
+  ],
+  "repository": "/home/rolandoandrade/WebstormProjects/mob-rest/replication-repository/books.xml"
 }

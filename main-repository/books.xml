@@ -1,0 +1,82 @@
+<library>
+    <book>
+        <creation-date>2021-01-21</creation-date>
+        <title>Domain-driven design</title>
+        <author>
+            <name>Eric</name>
+            <surname>Evans</surname>
+        </author>
+    </book>
+    <book>
+        <creation-date>2021-01-21</creation-date>
+        <title>Implementing Domain-driven Design</title>
+        <author>
+            <name>Vaughn</name>
+            <surname>Vernon</surname>
+        </author>
+    </book>
+    <book>
+        <creation-date>2021-01-21</creation-date>
+        <title>Domain-driven Design Distilled</title>
+        <author>
+            <name>Vaughn</name>
+            <surname>Vernon</surname>
+        </author>
+    </book>
+    <book>
+        <creation-date>2021-01-21</creation-date>
+        <title>Clean code</title>
+        <author>
+            <name>Robert</name>
+            <surname>Martin</surname>
+        </author>
+    </book>
+    <book>
+        <creation-date>2021-01-21</creation-date>
+        <title>The Pragmatic Programmer</title>
+        <author>
+            <name>Andy</name>
+            <surname>Hunt</surname>
+        </author>
+    </book>
+    <book>
+        <creation-date>2021-01-21</creation-date>
+        <title>Soft Skills: The Software Developer's Life Manual</title>
+        <author>
+            <name>Jhon</name>
+            <surname>Sonmez</surname>
+        </author>
+    </book>
+    <book>
+        <creation-date>2021-01-21</creation-date>
+        <title>Code Complete</title>
+        <author>
+            <name>Steve</name>
+            <surname>McConnel</surname>
+        </author>
+    </book>
+    <book>
+        <creation-date>2021-01-21</creation-date>
+        <title>Design Patterns</title>
+        <author>
+            <name>Erich</name>
+            <surname>Gamma</surname>
+        </author>
+    </book>
+    <book>
+        <creation-date>2021-01-21</creation-date>
+        <title>Head First Design Patterns</title>
+        <author>
+            <name>Elisabeth</name>
+            <surname>Freeman</surname>
+        </author>
+    </book>
+    <book>
+        <creation-date>2021-01-21</creation-date>
+        <title>Code Simplicity: The Fundamentals of Software</title>
+        <author>
+            <name>Max</name>
+            <surname>Kannat</surname>
+        </author>
+    </book>
+</library>

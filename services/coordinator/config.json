@@ -1,3 +1,4 @@
 {
-  "replicationServers": []
+  "replicationServers": [],
+  "repository": "/home/rolandoandrade/WebstormProjects/mob-rest/main-repository/books.xml"
 }
