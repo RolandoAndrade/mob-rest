@@ -1,0 +1,8 @@
+{
+  "replicationServers": [
+    {
+      "address": "localhost",
+      "port": 3000
+    }
+  ]
+}

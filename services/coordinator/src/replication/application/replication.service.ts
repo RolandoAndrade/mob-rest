@@ -43,7 +43,7 @@ export class ReplicationService{
         });
 
         if(this.votesRemaining === 0){
-            if(this.commitVotes === this.server.clients.length){
+            if(this.commitVotes === (this.server.engine as any).clientsCount){
                 this.loggerService.log("onVoteCommit: all votes are commit", "ReplicationService");
                 this.server.emit(ReplicationRequestMessages.GLOBAL_COMMIT);
             }
@@ -79,7 +79,9 @@ export class ReplicationService{
         this.loggerService.log("startReplicationProcess: starting replication process",
             "ReplicationService");
         this.isAReplicationRequestInProgress = true;
-        this.votesRemaining = this.server.clients.length;
+        this.votesRemaining = (this.server.engine as any).clientsCount;
+        this.commitVotes = 0;
+        this.abortVotes = 0;
         this.server.emit(ReplicationRequestMessages.VOTE_REQUEST);
         // now the system is counting the incoming votes
     }
