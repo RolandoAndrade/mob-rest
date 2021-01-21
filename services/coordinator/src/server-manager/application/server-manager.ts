@@ -1,15 +1,16 @@
 import {ConfigManager} from "../../shared/config/domain/config.manager";
 import {Injectable} from "@nestjs/common";
-import {Socket} from "socket.io";
 import {openConnection} from "../../shared/sockets/domain/open-connection";
 import {Host} from "../../shared/config/domain/host";
 import {LoggerService} from "../../shared/loggers/domain/logger.service";
+import {ReplicationRequestMessages} from "../../replication/domain/replication-messages";
+import {Socket} from "socket.io";
 
 @Injectable()
 export class ServerManager{
     private static replicationServers: Socket[] = [];
     constructor(private readonly configManager: ConfigManager, private readonly loggerService: LoggerService) {
-        if(ServerManager.length === 0){
+        if(ServerManager.replicationServers.length === 0){
             this.fillReplicationServers();
         }
     }
@@ -26,7 +27,7 @@ export class ServerManager{
         this.loggerService.log("sendMessageToReplicationServers: sending message to replication servers",
             "ServerManager", {message});
         for(const server of ServerManager.replicationServers){
-            server.emit(message);
+            console.log( server.emit(message));
         }
     }
 

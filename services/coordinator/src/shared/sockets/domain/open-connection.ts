@@ -1,35 +1,22 @@
 import {Logger} from "@nestjs/common";
-import {Socket} from "socket.io-client";
+import io from "socket.io-client";
+import {Socket as SIO} from "socket.io-client"
+import {Socket} from "net";
 
-
-export async function openConnection(port: number, host: string): Promise<Socket> {
+export async function openConnection(port: number, host: string): Promise<SIO> {
     const logger = new Logger("openConnection");
-    logger.log(`Iniciando conexión con ${host}:${port}`);
+    logger.log(`openConnection: starting connection ${host}:${port}`);
 
-    const socket = new Socket();
+    const socket = io(`ws://${host}:${port}`);
 
     socket.on("error", () => {
-        logger.error(`Fallo al conectar con ${host}:${port}`);
-        logger.log(`Reintentando...`);
-        socket.connect(port, host, () => {
-            logger.log(`Conectado con ${host}:${port}`);
-        });
-    });
-
-    socket.on("connect", () => {
-        logger.log(`Conectado con ${host}:${port}`);
+        logger.error(`failed connection ${host}:${port}`);
+        logger.log(`retrying...`);
     });
 
     socket.on("close", () => {
-        logger.log(`Desconectado`);
-        socket.connect(port, host, () => {
-            logger.log(`Conectado con ${host}:${port}`);
-        });
+        logger.log(`disconnected`);
     });
 
-    return new Promise((resolve, reject) => {
-        socket.connect(port, host, () => {
-            return resolve(socket);
-        });
-    });
+    return socket;
 }

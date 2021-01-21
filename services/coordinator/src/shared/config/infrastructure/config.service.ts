@@ -1,8 +1,8 @@
 import {ConfigManager} from "../domain/config.manager";
-const configFile = require('config.json');
+import configFile from "config.json";
 
 export class ConfigService implements ConfigManager{
-    private readonly configFile: { [key: string]: string };
+    private readonly configFile: { [key: string]: any };
 
     constructor() {
         this.configFile = configFile;

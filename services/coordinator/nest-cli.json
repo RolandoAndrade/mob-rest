@@ -1,4 +1,7 @@
 {
   "collection": "@nestjs/schematics",
-  "sourceRoot": "app"
+  "sourceRoot": "app",
+  "assets": [
+    "config.json"
+  ]
 }
