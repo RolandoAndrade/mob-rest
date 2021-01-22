@@ -23,7 +23,7 @@ export class RestoreService{
     }
 
     async onRestoreRequest() {
-        this.loggerService.log("onRestoreRequest: request of restoration in progress", "ReplicationService");
+        this.loggerService.log("onRestoreRequest: request of restoration in progress", "RestoreService");
         this.restoredObjects = [];
         this.server.emit(RestorationMessages.RETRIEVE_OBJECTS);
     }
@@ -38,20 +38,20 @@ export class RestoreService{
 
     @SubscribeMessage(RestorationMessages.RECEIVED_OBJECTS)
     async onReceivedObject(client: Socket, base64StringData: string) {
-        this.loggerService.log("onReceivedObject: received objects", "ReplicationService");
+        this.loggerService.log("onReceivedObject: received objects", "RestoreService");
         this.restoredObjects.push(base64StringData);
-        if(this.restoredObjects === (this.server.engine as any).clientsCount){
-            this.loggerService.log("onReceivedObject: received all objects, comparing them", "ReplicationService");
+        if(this.restoredObjects.length === (this.server.engine as any).clientsCount){
+            this.loggerService.log("onReceivedObject: received all objects, comparing them", "RestoreService");
             const areAllReceivedElementsEqual = this.restoredObjects.every(element=>element===base64StringData);
             if(areAllReceivedElementsEqual){
-                this.loggerService.debug("onReceivedObject: all received elements are equal, restoring the information", "ReplicationService");
+                this.loggerService.debug("onReceivedObject: all received elements are equal, restoring the information", "RestoreService");
                 fs.writeFileSync(this.configManager.get("repository"), base64StringData, 'base64')
             }
             else {
-                this.loggerService.warn("onReceivedObject: there are objects that don't equal, restoring the mode element", "ReplicationService");
+                this.loggerService.warn("onReceivedObject: there are objects that don't equal, restoring the mode element", "RestoreService");
                 fs.writeFileSync(this.configManager.get("repository"), this.mode(), 'base64')
             }
-            this.loggerService.debug(`onReplicationStart: saved a file at ${this.configManager.get("repository")}`, "ReplicationService");
+            this.loggerService.debug(`onReplicationStart: saved a file at ${this.configManager.get("repository")}`, "RestoreService");
         }
     }
 

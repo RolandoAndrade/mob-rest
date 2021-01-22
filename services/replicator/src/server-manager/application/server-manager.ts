@@ -1,11 +1,9 @@
-import {Injectable} from "@nestjs/common";
 import {openConnection} from "../../shared/sockets/domain/open-connection";
 import {LoggerService} from "../../shared/loggers/domain/logger.service";
 import {Socket} from "socket.io";
 import {ConfigManager} from "../../shared/config/domain/config.manager";
 import {Host} from "../../shared/config/domain/host";
 
-@Injectable()
 export class ServerManager{
     private static servers: Socket[] = [];
     constructor(private readonly configManager: ConfigManager, private readonly loggerService: LoggerService) {
@@ -25,7 +23,7 @@ export class ServerManager{
         this.loggerService.log("sendMessageToServers: sending message to servers",
             "ServerManager", {message});
         for(const server of ServerManager.servers){
-            server.emit(message)
+            server.emit(message, data)
         }
     }
 

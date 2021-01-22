@@ -14,7 +14,7 @@ export class RestoreService{
     }
 
     async onRetrieveObjects() {
-        this.loggerService.log("onRetrieveObjects: sending replication file", "ReplicationService");
+        this.loggerService.log("onRetrieveObjects: sending replication file", "RestoreService");
         const file = fs.readFileSync(this.configManager.get("repository")).toString('base64');
         this.serverManager.sendMessageToServers(RestorationMessages.RECEIVED_OBJECTS, file);
     }
