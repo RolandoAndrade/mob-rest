@@ -10,11 +10,6 @@ export enum ReplicationResponseMessages{
     VOTE_ABORT = "VOTE_ABORT"
 }
 
-export enum MOBCoordinatorMessages{
-    REPLICATE_OBJECTS = "REPLICATE_OBJECTS",
-    RESTORE_OBJECTS= "RESTORE_OBJECTS",
-}
-
 export enum ReplicatorCoordinatorMessages{
     MAKE_REPLICATION = "MAKE_REPLICATION",
     RETRIEVE_OBJECTS = "RETRIEVE_OBJECTS"

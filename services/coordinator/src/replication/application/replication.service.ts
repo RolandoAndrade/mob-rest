@@ -2,7 +2,6 @@ import {Injectable} from "@nestjs/common";
 import {SubscribeMessage, WebSocketGateway, WebSocketServer} from "@nestjs/websockets";
 import {Server, Socket} from "socket.io";
 import {
-    MOBCoordinatorMessages,
     ReplicationRequestMessages,
     ReplicationResponseMessages, ReplicatorCoordinatorMessages
 } from "../domain/replication-messages";
@@ -11,6 +10,7 @@ import {ServerManager} from "../../server-manager/application/server-manager";
 import {CommitStatus} from "../domain/commit-status";
 import * as fs from "fs";
 import {ConfigManager} from "../../shared/config/domain/config.manager";
+import {MOBCoordinatorMessages} from "../../../dist/src/replication/domain/replication-messages";
 
 @WebSocketGateway()
 @Injectable()
