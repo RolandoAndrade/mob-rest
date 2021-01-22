@@ -3,14 +3,15 @@ import {SubscribeMessage, WebSocketGateway, WebSocketServer} from "@nestjs/webso
 import {Server, Socket} from "socket.io";
 import {
     ReplicationRequestMessages,
-    ReplicationResponseMessages, ReplicatorCoordinatorMessages
+    ReplicationResponseMessages
 } from "../domain/replication-messages";
 import {LoggerService} from "../../shared/loggers/domain/logger.service";
 import {ServerManager} from "../../server-manager/application/server-manager";
 import {CommitStatus} from "../domain/commit-status";
 import * as fs from "fs";
 import {ConfigManager} from "../../shared/config/domain/config.manager";
-import {MOBCoordinatorMessages} from "../../../dist/src/replication/domain/replication-messages";
+import {ReplicatorCoordinatorMessages} from "../../shared/domain/replicator-coordinator-messages";
+import {MOBCoordinatorMessages} from "../../shared/domain/mob-coordinator-messages";
 
 @WebSocketGateway()
 @Injectable()

@@ -5,8 +5,8 @@ import {LoggerService} from "../../shared/loggers/domain/logger.service";
 import {ServerManager} from "../../server-manager/application/server-manager";
 import * as fs from "fs";
 import {ConfigManager} from "../../shared/config/domain/config.manager";
-import {MOBCoordinatorMessages} from "../../../dist/src/replication/domain/replication-messages";
 import {RestorationMessages} from "../domain/restoration-messages";
+import {MOBCoordinatorMessages} from "../../shared/domain/mob-coordinator-messages";
 
 @WebSocketGateway()
 @Injectable()

@@ -9,8 +9,3 @@ export enum ReplicationResponseMessages{
     VOTE_COMMIT = "VOTE_COMMIT",
     VOTE_ABORT = "VOTE_ABORT"
 }
-
-export enum ReplicatorCoordinatorMessages{
-    MAKE_REPLICATION = "MAKE_REPLICATION",
-    RETRIEVE_OBJECTS = "RETRIEVE_OBJECTS"
-}
