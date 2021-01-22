@@ -10,7 +10,7 @@ import {RestorationMessages} from "../domain/restoration-messages";
 
 @WebSocketGateway()
 @Injectable()
-export class ReplicationService{
+export class RestoreService{
     @WebSocketServer()
     server: Server;
 
@@ -51,6 +51,7 @@ export class ReplicationService{
                 this.loggerService.warn("onReceivedObject: there are objects that don't equal, restoring the mode element", "ReplicationService");
                 fs.writeFileSync(this.configManager.get("repository"), this.mode(), 'base64')
             }
+            this.loggerService.debug(`onReplicationStart: saved a file at ${this.configManager.get("repository")}`, "ReplicationService");
         }
     }
 
