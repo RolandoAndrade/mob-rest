@@ -1,4 +1,4 @@
-export enum MOBCoordinatorMessages{
-    REPLICATE_OBJECTS = "REPLICATE_OBJECTS",
-    RESTORE_OBJECTS= "RESTORE_OBJECTS",
+export enum MOBCoordinatorMessages {
+    REPLICATE_OBJECTS = 'REPLICATE_OBJECTS',
+    RESTORE_OBJECTS = 'RESTORE_OBJECTS',
 }

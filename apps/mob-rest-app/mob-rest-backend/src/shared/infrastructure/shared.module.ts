@@ -5,16 +5,16 @@ import { ConfigManager } from '../config/domain/config.manager';
 import { ConfigService } from '../config/infrastructure/config.service';
 
 @Module({
-  providers: [
-    {
-      provide: LoggerService,
-      useValue: logger,
-    },
-    {
-      provide: ConfigManager,
-      useClass: ConfigService,
-    },
-  ],
-  exports: [LoggerService, ConfigManager],
+    providers: [
+        {
+            provide: LoggerService,
+            useValue: logger,
+        },
+        {
+            provide: ConfigManager,
+            useClass: ConfigService,
+        },
+    ],
+    exports: [LoggerService, ConfigManager],
 })
 export class SharedModule {}

@@ -1,3 +1,3 @@
-import { ConsoleLogger } from "./console.logger";
+import { ConsoleLogger } from './console.logger';
 
 export const logger = new ConsoleLogger();

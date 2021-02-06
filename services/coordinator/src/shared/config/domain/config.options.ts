@@ -1,5 +1,5 @@
-import {Host} from "./host";
+import { Host } from './host';
 
-export interface ConfigOptions{
+export interface ConfigOptions {
     replicationServers: Host[];
 }

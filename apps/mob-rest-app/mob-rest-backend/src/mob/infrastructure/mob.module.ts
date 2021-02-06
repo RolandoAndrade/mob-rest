@@ -5,14 +5,14 @@ import { MobXmlRepository } from './mob-xml.repository';
 import { SharedModule } from '../../shared/infrastructure/shared.module';
 import { MobRepository } from '../domain/mob.repository';
 @Module({
-  imports: [SharedModule],
-  controllers: [MobController],
-  providers: [
-    MobService,
-    {
-      provide: MobRepository,
-      useClass: MobXmlRepository,
-    },
-  ],
+    imports: [SharedModule],
+    controllers: [MobController],
+    providers: [
+        MobService,
+        {
+            provide: MobRepository,
+            useClass: MobXmlRepository,
+        },
+    ],
 })
 export class MobModule {}

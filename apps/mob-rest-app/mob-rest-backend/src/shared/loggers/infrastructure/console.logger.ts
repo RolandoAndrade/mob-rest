@@ -1,5 +1,5 @@
-import { Logger } from "@nestjs/common";
-import { LoggerService } from "../domain/logger.service";
+import { Logger } from '@nestjs/common';
+import { LoggerService } from '../domain/logger.service';
 
 export class ConsoleLogger implements LoggerService {
     private logger: Logger;
@@ -7,31 +7,31 @@ export class ConsoleLogger implements LoggerService {
         this.logger = new Logger();
     }
 
-    debug(message: any, context: string = ""): boolean {
+    debug(message: any, context: string = ''): boolean {
         this.logger.debug(message, context);
         return false;
     }
 
-    error(message: any, trace?: string | {}, context: string = ""): boolean {
+    error(message: any, trace?: string | {}, context: string = ''): boolean {
         this.logger.error(
             message,
             trace ? JSON.stringify(trace) : undefined,
-            context
+            context,
         );
         return false;
     }
 
     log(
         message: any,
-        context: string = "",
-        data: {} | undefined = undefined
+        context: string = '',
+        data: {} | undefined = undefined,
     ): boolean {
-        if (data) message += " " + JSON.stringify(data);
+        if (data) message += ' ' + JSON.stringify(data);
         this.logger.log(message, context);
         return false;
     }
 
-    warn(message: any, context: string = ""): boolean {
+    warn(message: any, context: string = ''): boolean {
         this.logger.warn(message, context);
         return false;
     }

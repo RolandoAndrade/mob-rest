@@ -1,4 +1,4 @@
-export enum RestorationMessages{
-    RETRIEVE_OBJECTS = "RETRIEVE_OBJECTS",
-    RECEIVED_OBJECTS = "RECEIVED_OBJECTS"
+export enum RestorationMessages {
+    RETRIEVE_OBJECTS = 'RETRIEVE_OBJECTS',
+    RECEIVED_OBJECTS = 'RECEIVED_OBJECTS',
 }

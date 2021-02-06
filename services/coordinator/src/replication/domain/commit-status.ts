@@ -1,4 +1,4 @@
-export enum CommitStatus{
-    COMMIT = "COMMIT",
-    ABORT = "ABORT"
+export enum CommitStatus {
+    COMMIT = 'COMMIT',
+    ABORT = 'ABORT',
 }

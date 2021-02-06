@@ -1,7 +1,7 @@
-import {Author} from "./author";
+import { Author } from './author';
 
-export interface Book{
+export interface Book {
     author: Author;
     title: string;
-    "creation-date"?: string;
+    'creation-date'?: string;
 }
