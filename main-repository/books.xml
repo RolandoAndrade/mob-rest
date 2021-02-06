@@ -79,12 +79,4 @@
             <surname>Kannat</surname>
         </author>
     </book>
-    <book>
-        <title>Something</title>
-        <author>
-            <name>Name</name>
-            <surname>Surname</surname>
-        </author>
-        <creation-date>2021-02-06T20:50:05.042Z</creation-date>
-    </book>
 </library>

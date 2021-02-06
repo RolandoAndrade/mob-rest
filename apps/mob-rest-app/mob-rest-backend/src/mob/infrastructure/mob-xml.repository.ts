@@ -4,6 +4,7 @@ import {FindQuery} from "../domain/find-query";
 import * as parser from "xml-js";
 import * as fs from "fs";
 import {Library} from "../../shared/objects/domain/library";
+import {ParsedBook} from "../../shared/objects/domain/parsed-book";
 
 const nestob = require('nestob');
 
@@ -156,11 +157,22 @@ export class MobXmlRepository implements MobRepository{
 	}
 
 	public async deleteObject(query: FindQuery){
-		/*let editableJSON:any = await this.testReadFs();
-    	if(editableJSON.objects[id]){
-    		delete editableJSON.objects[id]
-    	}
-    	return await this.testWriteFs(editableJSON)*/
+		const library = this.getLibrary();
+		if(library && library.library && library.library.book){
+			if(!(library.library.book instanceof Array)){
+				library.library.book = [library.library.book as any];
+			}
+			library.library.book = library.library.book.filter((book)=>{
+				const title = (book as unknown as ParsedBook).title._text.toLowerCase();
+				const name = (book as unknown as ParsedBook).author.name._text.toLowerCase();
+				const surname = (book as unknown as ParsedBook).author.surname._text.toLowerCase();
+				const qTitle = (query.title || "").toLowerCase();
+				const qName = (query.name || "").toLowerCase();
+				const qSurname = (query.name || "").toLowerCase();
+				return !(title === qTitle || name === qName || qSurname === surname);
+			});
+		}
+		this.saveLibrary(library);
 		return true;
 	}
 

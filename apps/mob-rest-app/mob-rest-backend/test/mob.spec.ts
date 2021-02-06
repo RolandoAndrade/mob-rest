@@ -18,5 +18,12 @@ describe("mob service", ()=>{
             }
         });
         expect(created).toEqual(true);
-    })
+    });
+
+    it("should remove object", async ()=>{
+        const created = await service.deleteObject({
+            title: "Something"
+        });
+        expect(created).toEqual(true);
+    });
 })
