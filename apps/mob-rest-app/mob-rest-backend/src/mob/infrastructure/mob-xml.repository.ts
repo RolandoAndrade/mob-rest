@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import {MobRepository} from "../domain/mob.repository";
+import {Book} from "../../shared/objects/domain/book";
 
 @Injectable()
 export class MobXmlRepository implements MobRepository{
@@ -38,12 +39,7 @@ export class MobXmlRepository implements MobRepository{
 	private async writeXMLFile(resultxml){
 		let fs = require('fs');
 		fs.writeFile('./templates/backend-template.xml', resultxml, function(err, data) {
-		    if (err) {
-		      return false
-		    }
-		    else {
-		      return true
-		    }
+			return !err;
 		});
 	}
 	
@@ -131,10 +127,10 @@ export class MobXmlRepository implements MobRepository{
 		}	
 	}
 
-	public async createObject(object) {
+	public async createObject(book: Book) {
 		let formattedObject; let firstElement;
 		var nestob = require('nestob');		
-		[formattedObject,firstElement] = await this.extractElementsFromObjectAndPushIndividuallyToArray(object);
+		[formattedObject,firstElement] = await this.extractElementsFromObjectAndPushIndividuallyToArray(book);
 		let editableJSON:any = await this.testReadFs();
 		nestob.setNested(editableJSON.objects, firstElement,formattedObject);
 		return await this.testWriteFs(editableJSON)
@@ -149,7 +145,7 @@ export class MobXmlRepository implements MobRepository{
 	}
 
 
-	public async consultObject(id){		
+	public async findObject(id){
 		let editableJSON:any = await this.testReadFs();
 		if(editableJSON.objects[id]){
 			return editableJSON.objects[id]

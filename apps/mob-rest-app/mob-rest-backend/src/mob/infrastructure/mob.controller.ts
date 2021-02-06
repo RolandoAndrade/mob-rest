@@ -1,50 +1,33 @@
-import { Controller, Post, Get, Delete, Body, Res,HttpStatus } from '@nestjs/common';
+import {Controller, Post, Get, Delete, Body, Res, HttpStatus, Query, Put} from '@nestjs/common';
 import { MobService } from '../application/mob.service'
 import { MobXmlRepository } from './mob-xml.repository'
 import { Response } from 'express';
+import {Book} from "../../shared/objects/domain/book";
+import {FindQuery} from "../domain/find-query";
 
-@Controller('object-manipulator')
+@Controller("mob")
 export class MobController {
 	constructor(
-		private readonly objectManipulatorRepository:MobXmlRepository
+		private readonly mobService:MobService
 	){}
 
-	@Post('')
-	async SaveObject(
-		@Res() res: Response,
-		@Body() body: any
-	) {
-		try{
-			const response = await this.objectManipulatorRepository.createObject(body)
-			return res.status(HttpStatus.OK).send(response);
-		}catch(e){
-			return res.status(HttpStatus.BAD_REQUEST).send(JSON.stringify(e.message));
-		}		
+	@Post()
+	async createObject(@Body() book: Book) {
+		return this.mobService.createObject(book);
 	}
 
-	@Post('find')
-	async getObject(
-		@Res() res: Response,
-		@Body() body: any
-	) {
-		try{
-			const response = await this.objectManipulatorRepository.consultObject(body.key)
-			return res.status(HttpStatus.OK).send(response);
-		}catch(e){
-			return res.status(HttpStatus.BAD_REQUEST).send(JSON.stringify(e.message));
-		}		
+	@Get()
+	async getObject(@Query() query: FindQuery) {
+		return this.mobService.getObjects(query);
 	}
 
-	@Delete('')
-	async DeleteObject(
-		@Res() res: Response,
-		@Body() body: any
-	) {
-		try{
-			const response = await this.objectManipulatorRepository.deleteObject(body.key)
-			return res.status(HttpStatus.OK).send(response);
-		}catch(e){
-			return res.status(HttpStatus.BAD_REQUEST).send(JSON.stringify(e.message));
-		}		
+	@Delete()
+	async deleteObject(@Query() query: FindQuery) {
+		return this.mobService.deleteObject(query);
+	}
+
+	@Put()
+	async updateObject(@Query() query: FindQuery, @Body() book: Book) {
+		return this.mobService.updateObject(query, book);
 	}
 }
