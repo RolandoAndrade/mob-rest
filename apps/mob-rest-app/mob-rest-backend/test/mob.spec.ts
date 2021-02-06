@@ -26,4 +26,15 @@ describe("mob service", ()=>{
         });
         expect(created).toEqual(true);
     });
+
+    it("should retrieve objects", async ()=>{
+        let created = await service.getObjects({
+            title: "Domain-driven design"
+        });
+        expect(created.length).toEqual(1);
+        created = await service.getObjects({
+            name: "Vaughn"
+        });
+        expect(created.length).toEqual(2);
+    });
 })

@@ -122,6 +122,16 @@ export class MobXmlRepository implements MobRepository{
 		}	
 	}
 
+	private checkFilter(book: ParsedBook, filters: FindQuery): boolean{
+		const title =book.title._text.toLowerCase();
+		const name = book.author.name._text.toLowerCase();
+		const surname = book.author.surname._text.toLowerCase();
+		const qTitle = (filters.title || "").toLowerCase();
+		const qName = (filters.name || "").toLowerCase();
+		const qSurname = (filters.name || "").toLowerCase();
+		return title === qTitle || name === qName || qSurname === surname;
+	}
+
 	private getLibrary(): Library{
 		const options = {compact: true, ignoreComment: true, spaces: 4, alwaysChildren: true};
 		const xmlFile = fs.readFileSync("/home/rolandoandrade/WebstormProjects/mob-rest/main-repository/books.xml").toString();
@@ -162,14 +172,8 @@ export class MobXmlRepository implements MobRepository{
 			if(!(library.library.book instanceof Array)){
 				library.library.book = [library.library.book as any];
 			}
-			library.library.book = library.library.book.filter((book)=>{
-				const title = (book as unknown as ParsedBook).title._text.toLowerCase();
-				const name = (book as unknown as ParsedBook).author.name._text.toLowerCase();
-				const surname = (book as unknown as ParsedBook).author.surname._text.toLowerCase();
-				const qTitle = (query.title || "").toLowerCase();
-				const qName = (query.name || "").toLowerCase();
-				const qSurname = (query.name || "").toLowerCase();
-				return !(title === qTitle || name === qName || qSurname === surname);
+			library.library.book = library.library.book.filter((book: ParsedBook)=>{
+				return !this.checkFilter(book, query);
 			});
 		}
 		this.saveLibrary(library);
@@ -177,12 +181,26 @@ export class MobXmlRepository implements MobRepository{
 	}
 
 
-	public async findObject(id){
-		let editableJSON:any = await this.testReadFs();
-		if(editableJSON.objects[id]){
-			return editableJSON.objects[id]
+	public async findObject(findQuery: FindQuery): Promise<Book[]>{
+		const library = this.getLibrary();
+		let results: Book[] = [];
+		if(library && library.library && library.library.book){
+			if(!(library.library.book instanceof Array)){
+				library.library.book = [library.library.book as any];
+			}
+			results = library.library.book = library.library.book.filter((book: ParsedBook)=>{
+				return this.checkFilter(book, findQuery);
+			}).map((book: ParsedBook)=>{
+				return {
+					title: book.title._text,
+					author: {
+						name: book.author.name._text,
+						surname: book.author.surname._text
+					}
+				}
+			});
 		}
-		return []
+		return results;
 	}
 
 	public async updateObject(id,object){
