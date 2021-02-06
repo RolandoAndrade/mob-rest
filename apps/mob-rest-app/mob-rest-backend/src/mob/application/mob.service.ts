@@ -20,7 +20,7 @@ export class MobService {
 		return this.mobRepository.deleteObject(findQuery);
 	}
 
-	async updateObject(findQuery: FindQuery, object: Book){
+	async updateObject(findQuery: FindQuery, object: Partial<Book>){
 		this.loggerService.log("updateObject: updating object", "MobService");
 		return this.mobRepository.updateObject(findQuery, object);
 	}

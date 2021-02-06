@@ -20,9 +20,18 @@ describe("mob service", ()=>{
         expect(created).toEqual(true);
     });
 
+    it("should update objects", async ()=>{
+        let created = await service.updateObject({
+            title: "Something"
+        }, {
+            title: "some"
+        });
+        expect(created).toEqual(true);
+    });
+
     it("should remove object", async ()=>{
         const created = await service.deleteObject({
-            title: "Something"
+            title: "some"
         });
         expect(created).toEqual(true);
     });
