@@ -5,10 +5,11 @@ import * as parser from "xml-js";
 import * as fs from "fs";
 import {Library} from "../../shared/objects/domain/library";
 import {ParsedBook} from "../../shared/objects/domain/parsed-book";
+import {ConfigService} from "../../shared/config/infrastructure/config.service";
 
 export class MobXmlRepository implements MobRepository{
 
-	constructor(){}
+	constructor(private readonly configService: ConfigService){}
 
 	private checkFilter(book: ParsedBook, filters: FindQuery): boolean{
 		const title =book.title._text.toLowerCase();
@@ -22,14 +23,14 @@ export class MobXmlRepository implements MobRepository{
 
 	private getLibrary(): Library{
 		const options = {compact: true, ignoreComment: true, spaces: 4, alwaysChildren: true};
-		const xmlFile = fs.readFileSync("/home/rolandoandrade/WebstormProjects/mob-rest/main-repository/books.xml").toString();
+		const xmlFile = fs.readFileSync(this.configService.get("repository")).toString();
 		return parser.xml2js(xmlFile, options) as Library;
 	}
 
 	private saveLibrary(library: Library){
 		const options = {compact: true, ignoreComment: true, spaces: 4};
 		const xml = parser.js2xml(library, options);
-		fs.writeFileSync("/home/rolandoandrade/WebstormProjects/mob-rest/main-repository/books.xml",xml);
+		fs.writeFileSync(this.configService.get("repository"),xml);
 	}
 
 	public async createObject(book: Book): Promise<boolean> {
