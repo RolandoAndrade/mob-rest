@@ -2,10 +2,10 @@
   <v-container>
     <v-card max-width="800" class="mx-auto pa-2 card-rounded" outlined>
       <v-form class="pa-4">
-        <v-text-field prepend-icon="mdi-book" label="Título"></v-text-field>
+        <v-text-field prepend-icon="mdi-book" label="Título" v-model="findOptions.title"></v-text-field>
         <v-row no-gutters>
-          <v-text-field class="mr-2" prepend-icon="mdi-account" label="Nombre del autor"></v-text-field>
-          <v-text-field class="ml-2" prepend-icon="mdi-account" label="Apellido del autor"></v-text-field>
+          <v-text-field class="mr-2" prepend-icon="mdi-account" label="Nombre del autor" v-model="findOptions.name"></v-text-field>
+          <v-text-field class="ml-2" prepend-icon="mdi-account" label="Apellido del autor" v-model="findOptions.surname"></v-text-field>
         </v-row>
         <v-btn color="primary" rounded large block><v-icon class="mr-4">mdi-magnify</v-icon>BUSCAR LIBROS</v-btn>
         <v-row no-gutters justify="end" class="mt-4">
@@ -39,17 +39,24 @@ import Component from 'vue-class-component';
 import {Prop} from 'vue-property-decorator';
 import BookCard from "@/modules/mob/components/BookCard.vue";
 import {Book} from "@/modules/mob/domain/book";
+import mobRepository from "@/modules/mob/repository/mob-repository";
+import {FindOptions} from "@/modules/mob/domain/find-options";
 
 @Component({
   name: 'mob-view',
   components: {BookCard},
 })
 export default class MobView extends Vue {
-  books: Book[]=[
 
-  ]
+  private findOptions: Partial<FindOptions> = {};
+  private books: Book[]=[]
 
-  commitStatus: boolean = true;
+  private commitStatus: boolean = true;
+
+
+  private async search(){
+    this.books = await mobRepository.listBooks();
+  }
 }
 </script>
 
