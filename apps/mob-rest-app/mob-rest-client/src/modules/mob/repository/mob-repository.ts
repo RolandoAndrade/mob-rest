@@ -1,10 +1,21 @@
 import {Book} from "@/modules/mob/domain/book";
+import {FindOptions} from "@/modules/mob/domain/find-options";
 
-const baseURL = process.env.HOST;
+const baseURL = process.env.VUE_APP_HOST;
+
+function parseParams(findOptions: Partial<FindOptions>){
+    let s = "?"
+    for(const i in findOptions){
+        if((findOptions as any)[i].length){
+            s+=`${i}=${(findOptions as any)[i]}&`
+        }
+    }
+    return s;
+}
 
 export class MobRepository {
-    public async listBooks(): Promise<Book[]>{
-        const data = await fetch(`${baseURL}/mob`);
+    public async listBooks(findOptions: Partial<FindOptions>): Promise<Book[]>{
+        const data = await fetch(`${baseURL}/mob${parseParams(findOptions)}`);
         return data.json();
     }
 }

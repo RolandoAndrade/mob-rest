@@ -7,7 +7,7 @@
           <v-text-field class="mr-2" prepend-icon="mdi-account" label="Nombre del autor" v-model="findOptions.name"></v-text-field>
           <v-text-field class="ml-2" prepend-icon="mdi-account" label="Apellido del autor" v-model="findOptions.surname"></v-text-field>
         </v-row>
-        <v-btn color="primary" rounded large block><v-icon class="mr-4">mdi-magnify</v-icon>BUSCAR LIBROS</v-btn>
+        <v-btn color="primary" rounded large block @click="search"><v-icon class="mr-4">mdi-magnify</v-icon>BUSCAR LIBROS</v-btn>
         <v-row no-gutters justify="end" class="mt-4">
           <v-col class="pr-1">
             <v-btn @click="()=>{commitStatus = !commitStatus}" v-if="commitStatus" color="green" rounded large block dark><v-icon class="mr-4">mdi-check</v-icon>COMMIT</v-btn>
@@ -55,7 +55,7 @@ export default class MobView extends Vue {
 
 
   private async search(){
-    this.books = await mobRepository.listBooks();
+    this.books = await mobRepository.listBooks(this.findOptions);
   }
 }
 </script>

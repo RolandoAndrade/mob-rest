@@ -98,6 +98,7 @@ export class MobXmlRepository implements MobRepository {
                             name: book.author.name._text,
                             surname: book.author.surname._text,
                         },
+                        "creation-date": book["creation-date"]._text
                     };
                 });
         }

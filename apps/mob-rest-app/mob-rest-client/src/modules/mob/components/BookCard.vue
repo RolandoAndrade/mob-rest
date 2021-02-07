@@ -1,5 +1,5 @@
 <template>
-  <v-card max-width="800" class="mx-auto pa-2 card-rounded" outlined>
+  <v-card max-width="800" class="mx-auto pa-2 card-rounded my-2" outlined>
     <v-list-item>
       <v-list-item-avatar>
         <v-icon large>mdi-book</v-icon>
