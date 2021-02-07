@@ -1,15 +1,11 @@
-import { Injectable } from '@nestjs/common';
-import { Book } from '../../shared/objects/domain/book';
-import { FindQuery } from '../domain/find-query';
-import { MobRepository } from '../domain/mob.repository';
-import { LoggerService } from '../../shared/loggers/domain/logger.service';
+import {Injectable} from '@nestjs/common';
+import {Book} from '../../shared/objects/domain/book';
+import {FindQuery} from '../domain/find-query';
+import {MobRepository} from '../domain/mob.repository';
+import {LoggerService} from '../../shared/loggers/domain/logger.service';
 import {MOBCoordinatorMessages} from "../../shared/domain/mob-coordinator-messages";
 import {CommitStatus} from "../domain/commit-status";
-import {
-    SubscribeMessage,
-    WebSocketGateway,
-    WebSocketServer,
-} from '@nestjs/websockets';
+import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import {Server, Socket} from "socket.io";
 
 @WebSocketGateway()
@@ -48,37 +44,15 @@ export class MobService {
         return this.mobRepository.findObject(findQuery);
     }
 
-    async waitForResult(): Promise<boolean>{
-        this.onRequestInProgress = true;
-        return new Promise((resolve)=>{
-            const max = 10;
-            let tries = 0;
-            const check = () => {
-                tries++;
-                if (tries >= max) {
-                    resolve(false);
-                    return;
-                }
-                if (this.onRequestInProgress) setTimeout(check, 250);
-                else resolve(this.requestResult);
-            };
-            check();
-        });
-    }
-
     async replicateObjects(commit: CommitStatus): Promise<boolean> {
+        this.loggerService.log('replicateObjects: replicating objects', 'MobService');
         this.server.emit(MOBCoordinatorMessages.REPLICATE_OBJECTS, commit);
-       return this.waitForResult();
+        return commit === CommitStatus.COMMIT;
     }
 
     async restoreObjects(): Promise<boolean> {
+        this.loggerService.log('restoreObjects: restoring objects', 'MobService');
         this.server.emit(MOBCoordinatorMessages.RESTORE_OBJECTS);
-        return this.waitForResult();
-    }
-
-    @SubscribeMessage(MOBCoordinatorMessages.FINISHED)
-    onFinishedReceived(client: Socket, data: boolean){
-        this.requestResult = data == true;
-        this.onRequestInProgress = false;
+        return true;
     }
 }
