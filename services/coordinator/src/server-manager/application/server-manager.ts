@@ -20,7 +20,7 @@ export class ServerManager {
                 'ServerManager',
             );
             const servers: Host[] = this.configManager.get(
-                'replicationServers',
+                'appServers',
             );
             for (const server of servers) {
                 ServerManager.servers.push(
@@ -37,7 +37,7 @@ export class ServerManager {
             { message },
         );
         for (const server of ServerManager.servers) {
-            server.emit(message);
+            server.emit(message, data);
         }
     }
 

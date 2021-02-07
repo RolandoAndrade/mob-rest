@@ -10,11 +10,10 @@ import {
     Put,
 } from '@nestjs/common';
 import { MobService } from '../application/mob.service';
-import { MobXmlRepository } from './mob-xml.repository';
-import { Response } from 'express';
 import { Book } from '../../shared/objects/domain/book';
 import { FindQuery } from '../domain/find-query';
 import { LoggerService } from '../../shared/loggers/domain/logger.service';
+import {CommitStatus} from "../domain/commit-status";
 
 @Controller('mob')
 export class MobController {
@@ -22,6 +21,18 @@ export class MobController {
         private readonly mobService: MobService,
         private readonly loggerService: LoggerService,
     ) {}
+
+    @Post("restore")
+    async restoreObjects() {
+        this.loggerService.log('restoreObjects: post request', 'MobController');
+        return this.mobService.restoreObjects();
+    }
+
+    @Post("replicate")
+    async replicateObjects(@Body("commitStatus") commitStatus: CommitStatus) {
+        this.loggerService.log('replicateObjects: post request', 'MobController');
+        return this.mobService.replicateObjects(commitStatus);
+    }
 
     @Post()
     async createObject(@Body() book: Book) {
