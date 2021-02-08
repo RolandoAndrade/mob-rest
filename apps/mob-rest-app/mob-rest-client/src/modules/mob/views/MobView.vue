@@ -28,6 +28,7 @@
     <v-col v-else class="text-center">
       <div class="overline font-weight-light mx-auto mt-12">NO HAY LIBROS DISPONIBLES</div>
     </v-col>
+    <book-form></book-form>
     <v-btn fab fixed bottom right color="primary" large><v-icon>mdi-plus</v-icon></v-btn>
   </v-container>
 </template>
@@ -40,10 +41,11 @@ import BookCard from "@/modules/mob/components/BookCard.vue";
 import {Book} from "@/modules/mob/domain/book";
 import mobRepository from "@/modules/mob/repository/mob-repository";
 import {FindOptions} from "@/modules/mob/domain/find-options";
+import BookForm from "@/modules/mob/components/BookForm.vue";
 
 @Component({
   name: 'mob-view',
-  components: {BookCard},
+  components: {BookForm, BookCard},
 })
 export default class MobView extends Vue {
 
