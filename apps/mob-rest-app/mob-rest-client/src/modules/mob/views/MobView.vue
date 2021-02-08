@@ -19,12 +19,11 @@
           <v-col class="pl-1">
             <v-btn color="purple" rounded large block dark><v-icon class="mr-4">mdi-history</v-icon>RESTAURAR LIBROS</v-btn>
           </v-col>
-
         </v-row>
       </v-form>
     </v-card>
     <v-col v-if="books.length">
-      <book-card v-for="(book, k) in books" :book="book" :key="k"></book-card>
+      <book-card v-for="(book, k) in books" :book="book" :key="k" @deleteBook="deleteObject"></book-card>
     </v-col>
     <v-col v-else class="text-center">
       <div class="overline font-weight-light mx-auto mt-12">NO HAY LIBROS DISPONIBLES</div>
@@ -53,9 +52,29 @@ export default class MobView extends Vue {
 
   private commitStatus: boolean = true;
 
+  mounted(){
+    this.search();
+  }
 
   private async search(){
-    this.books = await mobRepository.listBooks(this.findOptions);
+    try{
+      this.books = await mobRepository.listBooks(this.findOptions);
+    }catch(e){
+
+    }
+  }
+
+  private async deleteObject(book: Book){
+    try{
+      await mobRepository.deleteBook({
+        title: book.title,
+        name: book.author.name,
+        surname: book.author.surname
+      });
+      await this.search();
+    }catch(e){
+
+    }
   }
 }
 </script>

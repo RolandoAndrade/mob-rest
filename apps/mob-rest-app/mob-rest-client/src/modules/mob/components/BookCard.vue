@@ -21,7 +21,10 @@
         </v-row>
       </v-list-item-content>
       <v-list-item-action>
-        <v-btn icon color="red" outlined><v-icon>mdi-delete</v-icon></v-btn>
+        <v-row no-gutters>
+          <v-btn icon color="secondary" outlined @click="deleteBook" class="mr-2"><v-icon>mdi-pencil</v-icon></v-btn>
+          <v-btn icon color="red" outlined @click="deleteBook"><v-icon>mdi-delete</v-icon></v-btn>
+        </v-row>
       </v-list-item-action>
     </v-list-item>
   </v-card>
@@ -30,7 +33,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import {Prop} from 'vue-property-decorator';
+import {Emit, Prop} from 'vue-property-decorator';
 import {Book} from "@/modules/mob/domain/book";
 
 @Component({
@@ -39,6 +42,11 @@ import {Book} from "@/modules/mob/domain/book";
 export default class BookCard extends Vue {
   @Prop({required: true})
   book!: Book;
+
+  @Emit("deleteBook")
+  deleteBook(){
+    return this.book;
+  }
 }
 </script>
 

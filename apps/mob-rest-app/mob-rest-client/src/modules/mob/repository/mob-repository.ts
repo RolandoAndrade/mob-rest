@@ -18,6 +18,13 @@ export class MobRepository {
         const data = await fetch(`${baseURL}/mob${parseParams(findOptions)}`);
         return data.json();
     }
+
+    public async deleteBook(findOptions: Partial<FindOptions>): Promise<Book[]>{
+        const data = await fetch(`${baseURL}/mob${parseParams(findOptions)}`, {
+            method: "DELETE"
+        });
+        return data.json();
+    }
 }
 
 const mobRepository = new MobRepository();
