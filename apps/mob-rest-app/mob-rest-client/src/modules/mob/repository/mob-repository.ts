@@ -25,6 +25,17 @@ export class MobRepository {
         });
         return data.json();
     }
+
+    public async createBook(book: Partial<Book>): Promise<Book[]>{
+        const data = await fetch(`${baseURL}/mob`, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(book)
+        });
+        return data.json();
+    }
 }
 
 const mobRepository = new MobRepository();

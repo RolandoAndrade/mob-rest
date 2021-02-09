@@ -3,17 +3,17 @@
     <v-card>
       <div class="title-card">CREAR LIBRO</div>
       <v-divider></v-divider>
-      <v-form>
+      <v-form ref="form">
         <v-col>
-          <v-text-field prepend-icon="mdi-book" label="Título"></v-text-field>
-          <v-text-field prepend-icon="mdi-account" label="Nombre del autor"></v-text-field>
-          <v-text-field prepend-icon="mdi-account" label="Apellido del autor"></v-text-field>
+          <v-text-field prepend-icon="mdi-book" label="Título" v-model="book.title"></v-text-field>
+          <v-text-field prepend-icon="mdi-account" label="Nombre del autor" v-model="book.author.name"></v-text-field>
+          <v-text-field prepend-icon="mdi-account" label="Apellido del autor" v-model="book.author.surname"></v-text-field>
           <v-row no-gutters>
             <v-col>
-              <v-btn block color="primary" class="mr-1">GUARDAR</v-btn>
+              <v-btn block color="primary" class="mr-1" @click="saveBook">GUARDAR</v-btn>
             </v-col>
             <v-col>
-              <v-btn block outlined color="primary" class="ml-1">CANCELAR</v-btn>
+              <v-btn block outlined color="primary" class="ml-1" @click="()=>{opened=false}">CANCELAR</v-btn>
             </v-col>
           </v-row>
         </v-col>
@@ -25,12 +25,51 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
+import {Emit, Prop, PropSync} from "vue-property-decorator";
+import {Book} from "@/modules/mob/domain/book";
+import mobRepository from "@/modules/mob/repository/mob-repository";
+import {eventBus} from "@/main";
 
 @Component({
   name: 'book-form',
 })
 export default class BookForm extends Vue {
-  opened = true
+  $refs!: {
+    form: any
+  }
+
+  @Prop({default: false})
+  isUpdating!: boolean;
+
+  @PropSync("bookData", {default: ()=>({
+      author: {}
+    })})
+  private book!: Book;
+
+  private opened = false;
+
+  async saveBook(){
+    try {
+      if(!this.isUpdating){
+        await mobRepository.createBook({
+          author: {
+            name: this.book.author.name || "",
+            surname: this.book.author.surname || ""
+          },
+          title: this.book.title
+        });
+      }
+      this.$refs.form.reset();
+      this.opened = false;
+      eventBus.$emit("success", "Se ha creado un libro");
+    }catch (e){
+      eventBus.$emit("error", "Error registrando el libro");
+    }
+  }
+
+  public openModal(){
+    this.opened = true;
+  }
 }
 </script>
 
