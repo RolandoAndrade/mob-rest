@@ -56,12 +56,24 @@ export default class BookForm extends Vue {
             name: this.book.author.name || "",
             surname: this.book.author.surname || ""
           },
-          title: this.book.title
+          title: this.book.title || ""
         });
+        eventBus.$emit("success", "Se ha creado un libro");
+      }
+      else {
+        await mobRepository.updateBook({
+          author: {
+            name: this.book.author.name || "",
+            surname: this.book.author.surname || ""
+          },
+          title: this.book.title || "",
+          "creation-date": this.book["creation-date"] || ""
+        });
+        eventBus.$emit("success", "Se ha actualizado un libro");
       }
       this.$refs.form.reset();
       this.opened = false;
-      eventBus.$emit("success", "Se ha creado un libro");
+
     }catch (e){
       eventBus.$emit("error", "Error registrando el libro");
     }

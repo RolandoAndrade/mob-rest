@@ -82,7 +82,11 @@ export default class MobView extends Vue {
 
   private async search(){
     try{
-      this.books = await mobRepository.listBooks(this.findOptions);
+      const books = await mobRepository.listBooks(this.findOptions);
+      this.books = [];
+      this.$nextTick(()=>{
+          this.books = books;
+      })
     }catch(e){
       eventBus.$emit("error", "Error buscando libros")
     }

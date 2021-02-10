@@ -22,11 +22,12 @@
       </v-list-item-content>
       <v-list-item-action>
         <v-row no-gutters>
-          <v-btn icon color="secondary" outlined @click="deleteBook" class="mr-2"><v-icon>mdi-pencil</v-icon></v-btn>
+          <v-btn icon color="secondary" outlined class="mr-2" @click="()=>$refs.modal.openModal()"><v-icon>mdi-pencil</v-icon></v-btn>
           <v-btn icon color="red" outlined @click="deleteBook"><v-icon>mdi-delete</v-icon></v-btn>
         </v-row>
       </v-list-item-action>
     </v-list-item>
+    <book-form ref="modal" :book-data="book" is-updating></book-form>
   </v-card>
 </template>
 
@@ -35,9 +36,11 @@ import Vue from 'vue';
 import Component from 'vue-class-component';
 import {Emit, Prop} from 'vue-property-decorator';
 import {Book} from "@/modules/mob/domain/book";
+import BookForm from "@/modules/mob/components/BookForm.vue";
 
 @Component({
   name: 'book-card',
+  components: {BookForm},
 })
 export default class BookCard extends Vue {
   @Prop({required: true})

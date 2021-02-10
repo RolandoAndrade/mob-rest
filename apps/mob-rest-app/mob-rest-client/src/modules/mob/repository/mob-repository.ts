@@ -36,6 +36,21 @@ export class MobRepository {
         });
         return data.json();
     }
+
+    public async updateBook(book: Book): Promise<Book[]>{
+        const data = await fetch(`${baseURL}/mob${parseParams({
+            title: book.title, 
+            name: book.author.name, 
+            surname: book.author.surname
+        })}`, {
+            method: "PUT",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(book)
+        });
+        return data.json();
+    }
 }
 
 const mobRepository = new MobRepository();
