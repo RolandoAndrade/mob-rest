@@ -14,7 +14,7 @@
             <v-btn @click="()=>{commitStatus = !commitStatus}" v-else color="red" rounded large block dark><v-icon class="mr-4">mdi-close</v-icon>ABORT</v-btn>
           </v-col>
           <v-col class="px-1">
-            <v-btn color="green" rounded large block dark><v-icon class="mr-4">mdi-cloud-upload-outline</v-icon>REPLICAR LIBROS</v-btn>
+            <v-btn color="green" rounded large block dark @click="replicate"><v-icon class="mr-4">mdi-cloud-upload-outline</v-icon>REPLICAR LIBROS</v-btn>
           </v-col>
           <v-col class="pl-1">
             <v-btn color="purple" rounded large block dark><v-icon class="mr-4">mdi-history</v-icon>RESTAURAR LIBROS</v-btn>
@@ -96,6 +96,20 @@ export default class MobView extends Vue {
       });
       await this.search();
       eventBus.$emit("success", "Se ha eliminando libro")
+    }catch(e){
+      eventBus.$emit("error", "Error eliminando libro")
+    }
+  }
+
+  private async replicate(){
+    try{
+      const a = await mobRepository.replication(this.commitStatus);
+      if(a){
+        eventBus.$emit("success", "Se ha solicitado la replicación por GLOBAL COMMIT")
+      }
+      else {
+        eventBus.$emit("error", "Se ha abortado la replicación por GLOBAL ABORT")
+      }
     }catch(e){
       eventBus.$emit("error", "Error eliminando libro")
     }

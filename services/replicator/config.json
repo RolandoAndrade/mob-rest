@@ -2,7 +2,7 @@
   "replicationServers": [
     {
       "address": "localhost",
-      "port": 3000
+      "port": 3001
     }
   ],
   "repository": "/home/rolandoandrade/WebstormProjects/mob-rest/replication-repository/books.xml"

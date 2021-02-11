@@ -51,6 +51,17 @@ export class MobRepository {
         });
         return data.json();
     }
+
+    public async replication(commitStatus: boolean): Promise<Book[]>{
+        const data = await fetch(`${baseURL}/mob/replicate`, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({commitStatus: commitStatus ? 'COMMIT' : 'ABORT'})
+        });
+        return data.json();
+    }
 }
 
 const mobRepository = new MobRepository();
