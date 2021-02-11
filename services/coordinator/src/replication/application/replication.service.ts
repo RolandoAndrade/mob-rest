@@ -35,7 +35,7 @@ export class ReplicationService {
     ) {
         serverManager.addEventFromServer(
             MOBCoordinatorMessages.REPLICATE_OBJECTS,
-            this.onReplicationRequest,
+            this.onReplicationRequest.bind(this),
         );
     }
 
