@@ -29,6 +29,7 @@ import {Emit, Prop, PropSync} from "vue-property-decorator";
 import {Book} from "@/modules/mob/domain/book";
 import mobRepository from "@/modules/mob/repository/mob-repository";
 import {eventBus} from "@/main";
+import {FindOptions} from "@/modules/mob/domain/find-options";
 
 @Component({
   name: 'book-form',
@@ -38,13 +39,17 @@ export default class BookForm extends Vue {
     form: any
   }
 
-  @Prop({default: false})
+  @Prop({default: false, type: Boolean})
   isUpdating!: boolean;
 
   @PropSync("bookData", {default: ()=>({
       author: {}
     })})
-  private book!: Book;
+  private editedBook!: Book;
+  private book: Partial<Book> = {
+    author: {}
+  } as Book;
+  private lastBook!: FindOptions;
 
   private opened = false;
 
@@ -53,22 +58,15 @@ export default class BookForm extends Vue {
       if(!this.isUpdating){
         await mobRepository.createBook({
           author: {
-            name: this.book.author.name || "",
-            surname: this.book.author.surname || ""
+            name: this.book.author!.name || "",
+            surname: this.book.author!.surname || ""
           },
           title: this.book.title || ""
         });
         eventBus.$emit("success", "Se ha creado un libro");
       }
       else {
-        await mobRepository.updateBook({
-          author: {
-            name: this.book.author.name || "",
-            surname: this.book.author.surname || ""
-          },
-          title: this.book.title || "",
-          "creation-date": this.book["creation-date"] || ""
-        });
+        await mobRepository.updateBook(this.lastBook, this.book as Book);
         eventBus.$emit("success", "Se ha actualizado un libro");
       }
       this.$refs.form.reset();
@@ -80,6 +78,18 @@ export default class BookForm extends Vue {
   }
 
   public openModal(){
+    this.book = {
+      title: this.editedBook.title,
+      author: {
+        name: this.editedBook.author.name,
+        surname: this.editedBook.author.surname
+      }
+    };
+    this.lastBook = {
+      name: this.book.author!.name || "",
+      surname: this.book.author!.surname || "",
+      title: this.book.title || ""
+    }
     this.opened = true;
   }
 }

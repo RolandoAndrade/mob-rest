@@ -37,7 +37,6 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import {Prop} from 'vue-property-decorator';
 import BookCard from "@/modules/mob/components/BookCard.vue";
 import {Book} from "@/modules/mob/domain/book";
 import mobRepository from "@/modules/mob/repository/mob-repository";
@@ -82,11 +81,7 @@ export default class MobView extends Vue {
 
   private async search(){
     try{
-      const books = await mobRepository.listBooks(this.findOptions);
-      this.books = [];
-      this.$nextTick(()=>{
-          this.books = books;
-      })
+      this.books = await mobRepository.listBooks(this.findOptions);
     }catch(e){
       eventBus.$emit("error", "Error buscando libros")
     }

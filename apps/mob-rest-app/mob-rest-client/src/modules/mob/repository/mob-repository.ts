@@ -37,7 +37,7 @@ export class MobRepository {
         return data.json();
     }
 
-    public async updateBook(book: Book): Promise<Book[]>{
+    public async updateBook(findOptions: Partial<FindOptions>, book: Book): Promise<Book[]>{
         const data = await fetch(`${baseURL}/mob${parseParams({
             title: book.title, 
             name: book.author.name, 
