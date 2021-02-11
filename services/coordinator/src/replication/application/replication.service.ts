@@ -100,14 +100,21 @@ export class ReplicationService {
     @SubscribeMessage(ReplicatorCoordinatorMessages.MAKE_REPLICATION)
     async onMakeReplication(client: Socket, username: string) {
         this.loggerService.log(
-            'onMakeReplication: sending objects',
+            'onMakeReplication: replication server ready',
             'ReplicationService',
+            {remainingResponses: --this.commitVotes}
         );
-        const file = fs.readFileSync(this.configManager.get('repository'));
-        this.server.emit(
-            ReplicationRequestMessages.LETS_MAKE_A_REPLICATION,
-            file.toString('base64'),
-        );
+        if (this.commitVotes <= 0) {
+            this.loggerService.log(
+                'onMakeReplication: sending objects to all replication servers',
+                'ReplicationService'
+            );
+            const file = fs.readFileSync(this.configManager.get('repository'));
+            this.server.emit(
+                ReplicationRequestMessages.LETS_MAKE_A_REPLICATION,
+                file.toString('base64'),
+            );
+        }
     }
 
     private async startReplicationProcess(commitStatus: CommitStatus) {
