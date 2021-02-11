@@ -17,7 +17,7 @@
             <v-btn color="green" rounded large block dark @click="replicate"><v-icon class="mr-4">mdi-cloud-upload-outline</v-icon>REPLICAR LIBROS</v-btn>
           </v-col>
           <v-col class="pl-1">
-            <v-btn color="purple" rounded large block dark><v-icon class="mr-4">mdi-history</v-icon>RESTAURAR LIBROS</v-btn>
+            <v-btn color="purple" rounded large block dark @click="restore"><v-icon class="mr-4">mdi-history</v-icon>RESTAURAR LIBROS</v-btn>
           </v-col>
         </v-row>
       </v-form>
@@ -111,7 +111,16 @@ export default class MobView extends Vue {
         eventBus.$emit("error", "Se ha abortado la replicación por GLOBAL ABORT")
       }
     }catch(e){
-      eventBus.$emit("error", "Error eliminando libro")
+      eventBus.$emit("error", "Error pidiendo restauración")
+    }
+  }
+
+  private async restore(){
+    try{
+      await mobRepository.restore();
+      eventBus.$emit("success", "Se ha recuperado la base de datos")
+    }catch(e){
+      eventBus.$emit("error", "Error pidiendo recuperación")
     }
   }
 }

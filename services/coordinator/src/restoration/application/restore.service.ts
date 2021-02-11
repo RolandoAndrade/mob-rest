@@ -27,7 +27,7 @@ export class RestoreService {
     ) {
         serverManager.addEventFromServer(
             MOBCoordinatorMessages.RESTORE_OBJECTS,
-            this.onRestoreRequest,
+            this.onRestoreRequest.bind(this),
         );
     }
 

@@ -19,14 +19,14 @@ export class MobRepository {
         return data.json();
     }
 
-    public async deleteBook(findOptions: Partial<FindOptions>): Promise<Book[]>{
+    public async deleteBook(findOptions: Partial<FindOptions>): Promise<boolean>{
         const data = await fetch(`${baseURL}/mob${parseParams(findOptions)}`, {
             method: "DELETE"
         });
         return data.json();
     }
 
-    public async createBook(book: Partial<Book>): Promise<Book[]>{
+    public async createBook(book: Partial<Book>): Promise<boolean>{
         const data = await fetch(`${baseURL}/mob`, {
             method: "POST",
             headers: {
@@ -37,7 +37,7 @@ export class MobRepository {
         return data.json();
     }
 
-    public async updateBook(findOptions: Partial<FindOptions>, book: Book): Promise<Book[]>{
+    public async updateBook(findOptions: Partial<FindOptions>, book: Book): Promise<boolean>{
         const data = await fetch(`${baseURL}/mob${parseParams({
             title: book.title, 
             name: book.author.name, 
@@ -52,13 +52,23 @@ export class MobRepository {
         return data.json();
     }
 
-    public async replication(commitStatus: boolean): Promise<Book[]>{
+    public async replication(commitStatus: boolean): Promise<boolean>{
         const data = await fetch(`${baseURL}/mob/replicate`, {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({commitStatus: commitStatus ? 'COMMIT' : 'ABORT'})
+        });
+        return data.json();
+    }
+
+    public async restore(): Promise<Book[]>{
+        const data = await fetch(`${baseURL}/mob/restore`, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
         });
         return data.json();
     }
