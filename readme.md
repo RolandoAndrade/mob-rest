@@ -41,5 +41,6 @@ PORT=300X npm run start:prod
 
 Then [Open your browser at http://localhost:3000](http://localhost:3000)
 
+![imagen](https://user-images.githubusercontent.com/20493065/107885796-aa0b8000-6ed2-11eb-9aac-24ad2e1fbc74.png)
 
 
